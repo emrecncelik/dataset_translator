@@ -33,6 +33,7 @@ class Translator:
         )
 
     def is_api_free(self):
+        # TODO make this check faster
         today = datetime.today()
         last_session_date = self._get_session_date_at(1)
 
@@ -62,13 +63,6 @@ class Translator:
             while t_minus < log_line_count - 1:
                 t_minus += 1
                 temp_char_count = self._get_char_count_at(t_minus)
-                print(
-                    t_minus,
-                    last_char_count - temp_char_count,
-                    last_char_count - temp_char_count > self.free_limit_char_count,
-                    self._get_session_date_at(t_minus) + relativedelta(months=1),
-                    self._get_session_date_at(1),
-                )
 
                 if abs(
                     last_char_count - temp_char_count

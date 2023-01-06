@@ -44,9 +44,13 @@ if __name__ == "__main__":
 
     translator = Translator(
         credentials=args.credentials,
-        logfile=args.logfile,
-        loglevel=args.loglevel,
+        log_filepath=args.logfile,
+        log_level=args.loglevel,
     )
+
+    if not translator.is_api_free():
+        logger.info("Exceeded monthly character limit.")
+        exit()
 
     translations = []
     if args.inline_separator:
