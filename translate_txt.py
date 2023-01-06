@@ -7,13 +7,6 @@ from translator import Translator
 
 from utils import lines_from_last_stop
 
-translator = Translator()
-output_filepath = "dialogues_translated.txt"
-input_filepath = "dialogues.txt"
-
-
-parser = ArgumentParser()
-
 
 @dataclass
 class TranslationArguments(Serializable):
