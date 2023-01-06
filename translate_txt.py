@@ -76,6 +76,10 @@ if __name__ == "__main__":
                 with open(args.output, "a") as f:
                     f.writelines(translations)
                 translations = []
+
+                if not translator.is_api_free():
+                    logger.info("Exceeded monthly character limit.")
+                    exit()
         else:
             with open(args.output, "a") as f:
                 f.writelines(translations)
