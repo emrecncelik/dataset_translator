@@ -1,7 +1,7 @@
 venv
 __pycache__
 *.json
-*.txt
 *.csv
 *.xlsx
 *.log
+data
