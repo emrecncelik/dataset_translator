@@ -1,5 +1,5 @@
 # Translator
-Tool to translate NLP datasets with ease. Keeps track of character count and passed time since last session, so that you do not exceed free character limit.
+Tool to translate NLP datasets with ease. Keeps track of character count and passed time since last session, so that you do not exceed free character limit. Uses and requires Google Cloud Translate API.
 
 # Usage
 ```bash
