@@ -10,44 +10,42 @@ from utils import lines_from_last_stop
 
 @dataclass
 class TranslationArguments(Serializable):
-    input_filepath: str
-    output_filepath: str = "output.txt"
-    source_lang: str = "en"
-    target_lang: str = "tr"
-    credentials_filepath: str = "credentials.json"
-    save_every: int = 100
-    log_filepath: str = "translator.log"
-    log_level: str = "INFO"
-    inline_separator: str = None
+    input: str  # input data file path
+    output: str  # output data file path
+    source: str = "en"  # language of input data
+    target: str = "tr"  # language of output data
+    credentials: str = "credentials.json"  # google cloud credentials for translate api
+    save_every: int = 100  # save batch size
+    logfile: str = "translator.log"  # log file path
+    loglevel: str = "INFO"  # logging level
+    inline_separator: str = None  # separator for dialogue-datasets eg. __eou__
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_arguments(TranslationArguments, dest="translation_args")
     args = parser.parse_args().translation_args
-    args.save(args.input_filepath.split(".")[0] + "_" + "args.json")
+    args.save(args.input.split(".")[0] + "_" + "args.json")
 
-    if ".txt" not in args.input_filepath:
+    if ".txt" not in args.input:
         raise ValueError("This script only supports txt files.")
 
-    if not os.path.exists(args.credentials_filepath):
-        raise FileNotFoundError(
-            f"Credentials file not found in {args.credentials_filepath}"
-        )
+    if not os.path.exists(args.credentials):
+        raise FileNotFoundError(f"Credentials file not found in {args.credentials}")
 
-    if os.path.exists(args.output_filepath):
-        lines = lines_from_last_stop(args.input_filepath, args.output_filepath)
+    if os.path.exists(args.output):
+        lines = lines_from_last_stop(args.input, args.output)
     else:
-        with open(args.input_filepath) as f:
+        with open(args.input) as f:
             lines = f.readlines()
 
     if args.inline_separator:
         lines = [l.split(args.inline_separator) for l in lines]
 
     translator = Translator(
-        credentials=args.credentials_filepath,
-        log_filepath=args.log_filepath,
-        log_level=args.log_level,
+        credentials=args.credentials,
+        logfile=args.logfile,
+        loglevel=args.loglevel,
     )
 
     translations = []
@@ -57,23 +55,23 @@ if __name__ == "__main__":
                 args.inline_separator.join(
                     translator.translate_text(
                         line,
-                        target=args.target_lang,
-                        source=args.source_lang,
+                        target=args.target,
+                        source=args.source,
                     )
                 )
                 if args.inline_separator
                 else translator.translate_text(
                     line,
-                    target=args.target_lang,
-                    source=args.source_lang,
+                    target=args.target,
+                    source=args.source,
                 )
             )
             translations.append(translation + "\n")
             if (idx + 1) % args.save_every == 0:
                 logger.info(f"Saving translation batch at {idx + 1}")
-                with open(args.output_filepath, "a") as f:
+                with open(args.output, "a") as f:
                     f.writelines(translations)
                 translations = []
         else:
-            with open(args.output_filepath, "a") as f:
+            with open(args.output, "a") as f:
                 f.writelines(translations)
