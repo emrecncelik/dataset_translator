@@ -8,8 +8,6 @@ from dateutil.relativedelta import relativedelta
 from google.oauth2 import service_account
 from google.cloud import translate_v2 as translate
 
-from utils import last_session_log_not_found
-
 
 class Translator:
     def __init__(
@@ -24,7 +22,7 @@ class Translator:
         self.log_level = log_level
         self.session_char_count = self._get_char_count_at(1)
         self.free_limit_char_count = free_limit_char_count
-        self._last_session_log_not_found_warning_raised = False
+        self._log_not_found_warning_raised = False
 
         logger.add(log_filepath, level=log_level)
 
@@ -119,7 +117,7 @@ class Translator:
 
     def _raise_warning(self):
         if not self._last_session_log_not_found_warning_raised:
-            last_session_log_not_found(logger)
+            self._log_not_found(logger)
             self._last_session_log_not_found_warning_raised = True
 
     def translate_text(
